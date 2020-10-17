@@ -1,12 +1,13 @@
 import React, { useRef, useState, useEffect } from "react"
-import { Flat } from "./MusicalComponents/Flat"
-import { Line } from "./MusicalComponents/Line"
-import { Sharp } from "./MusicalComponents/Sharp"
-import { Note } from "./MusicalComponents/Note"
-import { start } from "repl"
-import anime from "animejs"
+// import { Flat } from "./MusicalComponents/Flat"
+// import { Line } from "./MusicalComponents/Line"
+// import { Sharp } from "./MusicalComponents/Sharp"
+// import { Note } from "./MusicalComponents/Note"
+// import { start } from "repl"
+import anime, { AnimeTimelineInstance } from "animejs"
 import { TrebleClef } from "./MusicalComponents/TrebleClef"
 import { BassClef } from "./MusicalComponents/BassClef"
+import { KeySignature } from "../../../types"
 
 const VIEW_BOX_POS = {
     startX: 0,
@@ -15,131 +16,96 @@ const VIEW_BOX_POS = {
     endY: 400,
 }
 
-const ACCIDENTAL_INIT_POS: number = VIEW_BOX_POS.endX / 10
-const ACCIDENTAL_SPACING: number = .0375 * VIEW_BOX_POS.endX
-const ACCIDENTAL_X_POS: number[] = Array.from({ length: 5 }, (_, i) => {
-    return (ACCIDENTAL_INIT_POS) + (i * ACCIDENTAL_SPACING)
-})
+const LINE_INIT_POS: number = VIEW_BOX_POS.endY * 6 / 16
 
-const NOTE_INIT_POS: number = VIEW_BOX_POS.endX * 3 / 10
-const NOTE_SPACING: number = VIEW_BOX_POS.endX * 7 / 80
-const NOTE_X_POS: number[] = Array.from({ length: 8 }, (_, i) => {
-    return NOTE_INIT_POS + (i * NOTE_SPACING)
-})
-
-const LINE_INIT_POS: number = VIEW_BOX_POS.endY / 16
-const LINE_POS: number[] = Array.from({ length: 7 }, (_, i) => {
-    return LINE_INIT_POS + (i * 50)
-})
-
-const PITCH_POS: number[] = Array.from({ length: 14 }, (_, i) => {
+const PITCH_POS: number[] = Array.from({ length: 7 }, (_, i) => {
     return LINE_INIT_POS + (i * 25)
 })
-const PITCH_IDS: string[] = ["A5", "G5", "F5", "E5", "D5", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "B3"]
-const LINE_IDS: string[] = PITCH_IDS.filter((_, index) => index % 2 == 0)
-const LINE_INFO = LINE_IDS.map((id, index) => {
-    return { id: id, pos: LINE_POS[index] }
-})
-const PITCH_MAP = PITCH_POS.reduce((line_info, position, index) => {
-    line_info[PITCH_IDS[index]] = position
-    return line_info
-}, {})
 
+const BASS_PITCH_ORDER = ["C", "B", "A", "G", "F", "E", "D"]
+const TREBLE_PITCH_ORDER = ["A", "G", "F", "E", "D", "C", "B"]
 const KEY_SIGNATURES = ["Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B"]
 
-export const Staff: React.FC = () => {
-    const [isTrebleClef, setIsTrebleClef] = useState(true)
-    const [prevKey, setPrevKey] = useState(PITCH_MAP["C4"])
-    const [key, setKey] = useState(PITCH_MAP["C4"]);
-    const animationRef = useRef(null)
+type StaffProps = {
+    isTrebleClef: boolean,
+    prevKey: string,
+    currKey: string,
+    keySignature: KeySignature,
+}
 
+export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currKey, prevKey, keySignature }) => {
+    const orderToUse = isTrebleClef ? TREBLE_PITCH_ORDER : BASS_PITCH_ORDER
+    const noteBundleType = isTrebleClef ? "treble-notes" : "bass-notes" 
+    const pitchMap = PITCH_POS.reduce((lineInfo: {}, position: number, index: number) => {
+        lineInfo[orderToUse[index]] = position
+        return lineInfo
+    }, {})
+    const isFlat = keySignature.isFlatKeySignature()
+    const isSharp = keySignature.isSharpKeySignature()
+    const accidentalType = isFlat ? "flat" : isSharp ? "sharp" : ""
+    const accidentalTargets = keySignature.getAccidentalLocations().map(location => {
+        return `.${accidentalType}-${location}`
+    })
+    const targets = accidentalTargets.join(", ")
+    const [prevPos, setPrevPos] = useState(pitchMap[prevKey])
+    const [currPos, setCurrPos] = useState(pitchMap[currKey])
+    const [prevTargets, setPrevTargets] = useState(keySignature.getAccidentalLocations().map(location => {
+        return `.${accidentalType}-${location}`
+    }))
+    const [currTargets, setCurrTargets] = useState(keySignature.getAccidentalLocations().map(location => {
+        return `.${accidentalType}-${location}`
+    }))
+    const animationRef = useRef<AnimeTimelineInstance>(null)
+    
     useEffect(() => {
-        setPrevKey(PITCH_MAP["C4"])
-        setKey(PITCH_MAP["C4"])
+        setPrevPos(pitchMap[prevKey])
+        setCurrPos(pitchMap[currKey])
+        setCurrTargets(keySignature.getAccidentalLocations().map(location => {
+            return `.${accidentalType}-${location}`
+        }))
     }, [])
 
     useEffect(() => {
-        animationRef.current = anime({
-            targets: ".note-bundle",
-            translateY: `+=${key - prevKey}`,
+        const startKey: string = findStartKey(currKey)
+        setPrevPos(currPos)
+        setCurrPos(pitchMap[startKey])
+        setPrevTargets(currTargets)
+        setCurrTargets(keySignature.getAccidentalLocations().map(location => {
+            return `.${accidentalType}-${location}`
+        }))
+    }, [currKey])
+
+    useEffect(() => {
+        animationRef.current = anime.timeline({
             loop: false,
             delay: anime.stagger(150)
         })
-    }, [key])
 
-    const handleChange = event => {
-        event.preventDefault()
-        const { value } = event.target
-        const startKey = findStartKey(value)
-        setPrevKey(key)
-        setKey(PITCH_MAP[startKey])
-    }
+        animationRef.current.add({
+            targets: prevTargets.join(", "),
+            opacity: 0,
+            duration: 1000
+        }).add({
+            targets: `.${noteBundleType}`,
+            translateY: `+=${currPos - prevPos}`,
+        })
+    }, [currPos])
 
-    const findStartKey = (key: string): string => {
-        key = key.includes("b") ? key.substring(0, 1) : key
-        key += key === "B" ? "3" : "4"
-        return key
-    }
+    useEffect(() => {
+        animationRef.current.add({
+            targets: currTargets.join(", "),
+            opacity: 1,
+            duration: 1000,
+            begin: () => {
+                console.log(currTargets)
+            }
+        })
+        
+    }, [currTargets])
+
+    const findStartKey = (key: string): string => key.includes("b") ? key.substring(0, 1) : key
 
     return <div className="staff">
-        <svg width="85%" viewBox="0 0 2500 450" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="2500" height="450" fill="white" />
-            {isTrebleClef ? <TrebleClef /> : <BassClef />}
-            <line x1="829" y1="365" x2="956" y2="365" stroke="black" stroke-width="4" />
-            <line x1="1004" y1="365" x2="1131" y2="365" stroke="black" stroke-width="4" />
-            <line x1="229" y1="315" x2="2229" y2="315" stroke="black" stroke-width="4" />
-            <line x1="229" y1="265" x2="2229" y2="265" stroke="black" stroke-width="4" />
-            <line x1="229" y1="215" x2="2229" y2="215" stroke="black" stroke-width="4" />
-            <line x1="229" y1="165" x2="2229" y2="165" stroke="black" stroke-width="4" />
-            <line x1="229" y1="115" x2="2229" y2="115" stroke="black" stroke-width="4" />
-            <line x1="2054" y1="62" x2="2181" y2="62" stroke="black" stroke-width="4" />
-            <g className="note-bundle">
-                <path d="M929 363C929 377.359 908.606 391 889 391C869.394 391 858 381.359 858 367C858 352.641 877.894 339 897.5 339C917.106 339 929 348.641 929 363Z" fill="black" />
-                <path d="M825.489 358.792C825.489 363.524 823.715 368.056 818.849 374.138C813.692 380.582 809.352 384.27 803.633 388.607V360.364C804.933 357.081 806.851 354.423 809.393 352.382C811.928 350.349 814.495 349.329 817.096 349.329C821.391 349.329 824.115 351.765 825.292 356.62C825.424 357.015 825.489 357.739 825.489 358.792ZM824.872 339.042C821.325 339.042 817.721 340.022 814.051 341.988C810.381 343.947 806.908 346.572 803.633 349.839V290H799V392.491C799 395.388 799.79 396.836 801.37 396.836C802.283 396.836 803.418 396.071 805.114 395.059C809.915 392.194 812.907 390.279 816.158 388.26C819.866 385.956 824.041 383.265 829.563 377.999C833.373 374.172 836.13 370.313 837.841 366.429C839.545 362.536 840.4 358.685 840.4 354.859C840.4 349.197 838.895 345.173 835.883 342.795C832.476 340.293 828.797 339.042 824.872 339.042Z" fill="black" />
-            </g>
-            <g className="note-bundle">
-                <path d="M1104 338C1104 352.359 1083.61 366 1064 366C1044.39 366 1033 356.359 1033 342C1033 327.641 1052.89 314 1072.5 314C1092.11 314 1104 323.641 1104 338Z" fill="black" />
-                <path d="M987.335 355.001V322.091L1001.33 318.229V350.971L987.335 355.001ZM1014.89 347.039L1005.27 349.796V317.054L1014.89 314.368V300.767L1005.27 303.454V270H1001.33V304.468L987.335 308.491V275.961H983.62V309.729L974 312.423V326.051L983.62 323.365V356.043L974 358.723V372.295L983.62 369.609V402.873H987.335V368.419L1001.33 364.572V396.934H1005.27V363.354L1014.89 360.661V347.039Z" fill="black" />
-                <path d="M1000.49 332.792C1000.49 337.524 998.715 342.056 993.849 348.138C988.692 354.582 984.352 358.27 978.633 362.607V334.364C979.933 331.081 981.851 328.423 984.393 326.382C986.928 324.349 989.495 323.329 992.096 323.329C996.391 323.329 999.115 325.765 1000.29 330.62C1000.42 331.015 1000.49 331.739 1000.49 332.792ZM999.872 313.042C996.325 313.042 992.721 314.022 989.051 315.988C985.381 317.947 981.908 320.572 978.633 323.839V264H974V366.491C974 369.388 974.79 370.836 976.37 370.836C977.283 370.836 978.418 370.071 980.114 369.059C984.915 366.194 987.907 364.279 991.158 362.26C994.866 359.956 999.041 357.265 1004.56 351.999C1008.37 348.172 1011.13 344.313 1012.84 340.429C1014.54 336.536 1015.4 332.685 1015.4 328.859C1015.4 323.197 1013.89 319.173 1010.88 316.795C1007.48 314.293 1003.8 313.042 999.872 313.042Z" fill="black" />
-            </g>
-            <g className="note-bundle">
-                <path d="M1279 313C1279 327.359 1258.61 341 1239 341C1219.39 341 1208 331.359 1208 317C1208 302.641 1227.89 289 1247.5 289C1267.11 289 1279 298.641 1279 313Z" fill="black" />
-                <path d="M1162.33 333.001V300.091L1176.33 296.229V328.971L1162.33 333.001ZM1189.89 325.039L1180.27 327.796V295.054L1189.89 292.368V278.767L1180.27 281.454V248H1176.33V282.468L1162.33 286.491V253.961H1158.62V287.729L1149 290.423V304.051L1158.62 301.365V334.043L1149 336.723V350.295L1158.62 347.609V380.873H1162.33V346.419L1176.33 342.572V374.934H1180.27V341.354L1189.89 338.661V325.039Z" fill="black" />
-            </g>
-            <g className="note-bundle">
-                <path d="M1454 288C1454 302.359 1433.61 316 1414 316C1394.39 316 1383 306.359 1383 292C1383 277.641 1402.89 264 1422.5 264C1442.11 264 1454 273.641 1454 288Z" fill="black" />
-                <path d="M1354.49 282.792C1354.49 287.524 1352.72 292.056 1347.85 298.138C1342.69 304.582 1338.35 308.27 1332.63 312.607V284.364C1333.93 281.081 1335.85 278.423 1338.39 276.382C1340.93 274.349 1343.5 273.329 1346.1 273.329C1350.39 273.329 1353.12 275.765 1354.29 280.62C1354.42 281.015 1354.49 281.739 1354.49 282.792ZM1353.87 263.042C1350.33 263.042 1346.72 264.022 1343.05 265.988C1339.38 267.947 1335.91 270.572 1332.63 273.839V214H1328V316.491C1328 319.388 1328.79 320.836 1330.37 320.836C1331.28 320.836 1332.42 320.071 1334.11 319.059C1338.91 316.194 1341.91 314.279 1345.16 312.26C1348.87 309.956 1353.04 307.265 1358.56 301.999C1362.37 298.172 1365.13 294.313 1366.84 290.429C1368.54 286.536 1369.4 282.685 1369.4 278.859C1369.4 273.197 1367.89 269.173 1364.88 266.795C1361.48 264.293 1357.8 263.042 1353.87 263.042Z" fill="black" />
-            </g>
-            <g className="note-bundle">
-                <path d="M1629 263C1629 277.359 1608.61 291 1589 291C1569.39 291 1558 281.359 1558 267C1558 252.641 1577.89 239 1597.5 239C1617.11 239 1629 248.641 1629 263Z" fill="black" />
-                <path d="M1512.33 279.001V246.091L1526.33 242.229V274.971L1512.33 279.001ZM1539.89 271.039L1530.27 273.796V241.054L1539.89 238.368V224.767L1530.27 227.454V194H1526.33V228.468L1512.33 232.491V199.961H1508.62V233.729L1499 236.423V250.051L1508.62 247.365V280.043L1499 282.723V296.295L1508.62 293.609V326.873H1512.33V292.419L1526.33 288.572V320.934H1530.27V287.354L1539.89 284.661V271.039Z" fill="black" />
-                <path d="M1525.49 257.792C1525.49 262.524 1523.72 267.056 1518.85 273.138C1513.69 279.582 1509.35 283.27 1503.63 287.607V259.364C1504.93 256.081 1506.85 253.423 1509.39 251.382C1511.93 249.349 1514.5 248.329 1517.1 248.329C1521.39 248.329 1524.12 250.765 1525.29 255.62C1525.42 256.015 1525.49 256.739 1525.49 257.792ZM1524.87 238.042C1521.33 238.042 1517.72 239.022 1514.05 240.988C1510.38 242.947 1506.91 245.572 1503.63 248.839V189H1499V291.491C1499 294.388 1499.79 295.836 1501.37 295.836C1502.28 295.836 1503.42 295.071 1505.11 294.059C1509.91 291.194 1512.91 289.279 1516.16 287.26C1519.87 284.956 1524.04 282.265 1529.56 276.999C1533.37 273.172 1536.13 269.313 1537.84 265.429C1539.54 261.536 1540.4 257.685 1540.4 253.859C1540.4 248.197 1538.89 244.173 1535.88 241.795C1532.48 239.293 1528.8 238.042 1524.87 238.042Z" fill="black" />
-
-            </g>
-            <g className="note-bundle">
-                <path d="M1804 238C1804 252.359 1783.61 266 1764 266C1744.39 266 1733 256.359 1733 242C1733 227.641 1752.89 214 1772.5 214C1792.11 214 1804 223.641 1804 238Z" fill="black" />
-                <path d="M1687.33 258.001V225.091L1701.33 221.229V253.971L1687.33 258.001ZM1714.89 250.039L1705.27 252.796V220.054L1714.89 217.368V203.767L1705.27 206.454V173H1701.33V207.468L1687.33 211.491V178.961H1683.62V212.729L1674 215.423V229.051L1683.62 226.365V259.043L1674 261.723V275.295L1683.62 272.609V305.873H1687.33V271.419L1701.33 267.572V299.934H1705.27V266.354L1714.89 263.661V250.039Z" fill="black" />
-                <path d="M1700.49 232.792C1700.49 237.524 1698.72 242.056 1693.85 248.138C1688.69 254.582 1684.35 258.27 1678.63 262.607V234.364C1679.93 231.081 1681.85 228.423 1684.39 226.382C1686.93 224.349 1689.5 223.329 1692.1 223.329C1696.39 223.329 1699.12 225.765 1700.29 230.62C1700.42 231.015 1700.49 231.739 1700.49 232.792ZM1699.87 213.042C1696.33 213.042 1692.72 214.022 1689.05 215.988C1685.38 217.947 1681.91 220.572 1678.63 223.839V164H1674V266.491C1674 269.388 1674.79 270.836 1676.37 270.836C1677.28 270.836 1678.42 270.071 1680.11 269.059C1684.91 266.194 1687.91 264.279 1691.16 262.26C1694.87 259.956 1699.04 257.265 1704.56 251.999C1708.37 248.172 1711.13 244.313 1712.84 240.429C1714.54 236.536 1715.4 232.685 1715.4 228.859C1715.4 223.197 1713.89 219.173 1710.88 216.795C1707.48 214.293 1703.8 213.042 1699.87 213.042Z" fill="black" />
-
-            </g>
-            <g className="note-bundle">
-                <path d="M1979 213C1979 227.359 1958.61 241 1939 241C1919.39 241 1908 231.359 1908 217C1908 202.641 1927.89 189 1947.5 189C1967.11 189 1979 198.641 1979 213Z" fill="black" />
-                <path d="M1862.33 228.001V195.091L1876.33 191.229V223.971L1862.33 228.001ZM1889.89 220.039L1880.27 222.796V190.054L1889.89 187.368V173.767L1880.27 176.454V143H1876.33V177.468L1862.33 181.491V148.961H1858.62V182.729L1849 185.423V199.051L1858.62 196.365V229.043L1849 231.723V245.295L1858.62 242.609V275.873H1862.33V241.419L1876.33 237.572V269.934H1880.27V236.354L1889.89 233.661V220.039Z" fill="black" />
-
-            </g>
-            <g className="note-bundle">
-                <path d="M2154 188C2154 202.359 2133.61 216 2114 216C2094.39 216 2083 206.359 2083 192C2083 177.641 2102.89 164 2122.5 164C2142.11 164 2154 173.641 2154 188Z" fill="black" />
-                <path d="M2050.49 181.792C2050.49 186.524 2048.72 191.056 2043.85 197.138C2038.69 203.582 2034.35 207.27 2028.63 211.607V183.364C2029.93 180.081 2031.85 177.423 2034.39 175.382C2036.93 173.349 2039.5 172.329 2042.1 172.329C2046.39 172.329 2049.12 174.765 2050.29 179.62C2050.42 180.015 2050.49 180.739 2050.49 181.792ZM2049.87 162.042C2046.33 162.042 2042.72 163.022 2039.05 164.988C2035.38 166.947 2031.91 169.572 2028.63 172.839V113H2024V215.491C2024 218.388 2024.79 219.836 2026.37 219.836C2027.28 219.836 2028.42 219.071 2030.11 218.059C2034.91 215.194 2037.91 213.279 2041.16 211.26C2044.87 208.956 2049.04 206.265 2054.56 200.999C2058.37 197.172 2061.13 193.313 2062.84 189.429C2064.54 185.536 2065.4 181.685 2065.4 177.859C2065.4 172.197 2063.89 168.173 2060.88 165.795C2057.48 163.293 2053.8 162.042 2049.87 162.042Z" fill="black" />
-            </g>
-            <line x1="231" y1="117" x2="231" y2="317" stroke="black" stroke-width="4" />
-        </svg>
-
-
-        <select onChange={handleChange}>
-            {KEY_SIGNATURES.map(key =>
-                <option key={key} value={key} selected={key.includes("C")}>{key}</option>
-            )}
-        </select>
-
+        {isTrebleClef ? <TrebleClef /> : <BassClef />}
     </div>
 }
