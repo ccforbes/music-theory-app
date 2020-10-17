@@ -1,7 +1,6 @@
 import { CSSProperties } from "react"
 
 const style: CSSProperties = {
-    display: "block",
     opacity: 0
 }
 
