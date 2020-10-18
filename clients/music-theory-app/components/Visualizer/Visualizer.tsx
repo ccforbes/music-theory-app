@@ -5,7 +5,7 @@ import { KeyboardLayout, Note, KeySignature } from "../../types"
 const MUSICAL_ALPHABET = ["A", "B", "C", "D", "E", "F", "G"]
 const keyboardLayout = new KeyboardLayout(MUSICAL_ALPHABET)
 
-const ROOT_NOTES = ["Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B"]
+const ROOT_NOTES = ["Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#"]
 const keySignatures: Map<string, KeySignature> = new Map<string, KeySignature>()
 ROOT_NOTES.map(startNote => {
     keySignatures.set(
@@ -13,30 +13,13 @@ ROOT_NOTES.map(startNote => {
         new KeySignature(startNote, keyboardLayout.getKeyboardLayout())
     )
 })
+console.log(keySignatures)
 
 export const Visualizer: React.FC = () => {
     const [prevRoot, setPrevKey] = useState("C")
     const [currRoot, setKey] = useState("C");
     const [prevKeySignature, setPrevKeySignature] = useState(keySignatures.get("C"))
     const [currKeySignature, setCurrKeySignature] = useState(keySignatures.get("C"))
-    // console.log(keyboardLayout)
-    // const keySignature = new KeySignature(key, keyboardLayout.getKeyboardLayout())
-    // console.log(keySignature)
-    // const isFlat = keySignature.isFlatKeySignature()
-    // const isSharp = keySignature.isSharpKeySignature()
-    // const notes: Note[] = keySignature.getNotes()
-    // const noteLabelsSet: Set<string> = new Set<string>();
-    // const noteLabels: string[] = notes.map(note => {
-    //     const label = note.getLabel(isFlat, isSharp, noteLabelsSet)   
-    //     noteLabelsSet.add(label)
-    //     return label
-    // })
-
-    // useEffect(() => {
-    //     setPrevKey("C")
-    //     setKey("C")
-    //     setKeySignature(keySignatures.get("C"))
-    // }, [])
 
     const handleChange = event => {
         event.preventDefault()
