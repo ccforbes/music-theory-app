@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState } from "react"
 import { Staff } from "./Staff/Staff"
-import { KeyboardLayout, Note, KeySignature } from "../../types"
+import { KeyboardLayout, KeySignature } from "../../types"
 
 const MUSICAL_ALPHABET = ["A", "B", "C", "D", "E", "F", "G"]
 const keyboardLayout = new KeyboardLayout(MUSICAL_ALPHABET)
 
-const ROOT_NOTES = ["Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#"]
+const ROOT_NOTES = ["Cb", "Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#"]
 const keySignatures: Map<string, KeySignature> = new Map<string, KeySignature>()
 ROOT_NOTES.map(startNote => {
     keySignatures.set(
@@ -13,13 +13,14 @@ ROOT_NOTES.map(startNote => {
         new KeySignature(startNote, keyboardLayout.getKeyboardLayout())
     )
 })
-console.log(keySignatures)
 
 export const Visualizer: React.FC = () => {
+    // initial state
     const [prevRoot, setPrevKey] = useState("C")
     const [currRoot, setKey] = useState("C");
     const [prevKeySignature, setPrevKeySignature] = useState(keySignatures.get("C"))
     const [currKeySignature, setCurrKeySignature] = useState(keySignatures.get("C"))
+    const [disableSelector, setDisableSelector] = useState(false)
 
     const handleChange = event => {
         event.preventDefault()
@@ -36,15 +37,17 @@ export const Visualizer: React.FC = () => {
             currRoot={currRoot} 
             prevRoot={prevRoot} 
             prevKeySignature={prevKeySignature}
-            currKeySignature={currKeySignature} />
+            currKeySignature={currKeySignature}
+            setDisabled={setDisableSelector} />
         <Staff 
             isTrebleClef={false} 
             currRoot={currRoot} 
             prevRoot={prevRoot} 
             prevKeySignature={prevKeySignature}
-            currKeySignature={currKeySignature} />
+            currKeySignature={currKeySignature}
+            setDisabled={setDisableSelector} />
 
-        <select onChange={handleChange}>
+        <select id="selector" onChange={handleChange} disabled={disableSelector}>
             {ROOT_NOTES.map(rootNote =>
                 <option 
                     key={rootNote} 

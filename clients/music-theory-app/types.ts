@@ -82,9 +82,9 @@ export class KeySignature {
     private startNote: string
     private pattern: number[] = [2, 2, 1, 2, 2, 2, 1]
     private flatKeySignatures: Set<string> = 
-        new Set<string>(["F", "Bb", "Eb", "Ab", "Db", "Gb"]) 
+        new Set<string>(["F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"]) 
     private sharpKeySignatures: Set<string> =
-        new Set<string>(["G", "D", "A", "E", "B", "F#"])
+        new Set<string>(["G", "D", "A", "E", "B", "F#", "C#"])
 
     public constructor(startNote: string, keyboardLayout: Note[]) {
         this.startNote = startNote
@@ -99,7 +99,7 @@ export class KeySignature {
             noteLabelsSet.add(label)
             return label
         })
-
+        
         this.accidentalLocations = this.noteLabels.map((label, index) => {
             if (label.includes("b") || label.includes("#")) {
                 return index + 1
