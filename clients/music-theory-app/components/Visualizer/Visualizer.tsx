@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { Staff } from "./Staff/Staff"
 import { KeyboardLayout, KeySignature } from "../../types"
+import { useEffect } from "react"
 
 const MUSICAL_ALPHABET = ["A", "B", "C", "D", "E", "F", "G"]
 const keyboardLayout = new KeyboardLayout(MUSICAL_ALPHABET)
@@ -16,8 +17,8 @@ ROOT_NOTES.map(startNote => {
 
 export const Visualizer: React.FC = () => {
     // initial state
-    const [prevRoot, setPrevKey] = useState("C")
-    const [currRoot, setKey] = useState("C");
+    const [prevRoot, setPrevRoot] = useState("C")
+    const [currRoot, setCurrRoot] = useState("C");
     const [prevKeySignature, setPrevKeySignature] = useState(keySignatures.get("C"))
     const [currKeySignature, setCurrKeySignature] = useState(keySignatures.get("C"))
     const [disableSelector, setDisableSelector] = useState(false)
@@ -25,8 +26,8 @@ export const Visualizer: React.FC = () => {
     const handleChange = event => {
         event.preventDefault()
         const { value } = event.target
-        setPrevKey(currRoot)
-        setKey(value)
+        setPrevRoot(currRoot)
+        setCurrRoot(value)
         setPrevKeySignature(currKeySignature)
         setCurrKeySignature(keySignatures.get(value))
     }
@@ -38,14 +39,16 @@ export const Visualizer: React.FC = () => {
             prevRoot={prevRoot} 
             prevKeySignature={prevKeySignature}
             currKeySignature={currKeySignature}
-            setDisabled={setDisableSelector} />
+            setDisabled={setDisableSelector} 
+        />
         <Staff 
             isTrebleClef={false} 
             currRoot={currRoot} 
             prevRoot={prevRoot} 
             prevKeySignature={prevKeySignature}
             currKeySignature={currKeySignature}
-            setDisabled={setDisableSelector} />
+            setDisabled={setDisableSelector} 
+        />
 
         <select id="selector" onChange={handleChange} disabled={disableSelector}>
             {ROOT_NOTES.map(rootNote =>
