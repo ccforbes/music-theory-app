@@ -56,12 +56,11 @@ export const Visualizer: React.FC = () => {
             currKeySignature={currKeySignature}
         />
 
-        <select id="selector" onChange={handleChange} disabled={disableSelector}>
+        <select id="selector" onChange={handleChange} defaultValue={"C"} disabled={disableSelector}>
             {ROOT_NOTES.map(rootNote =>
                 <option 
                     key={rootNote} 
                     value={rootNote} 
-                    selected={rootNote === "C"}
                 >
                     {rootNote}
                 </option>
