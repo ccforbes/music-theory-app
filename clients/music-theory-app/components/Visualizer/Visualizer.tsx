@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Staff } from "./Staff/Staff"
 import { KeyboardLayout, KeySignature } from "../../types"
-import { useEffect } from "react"
+import { Keyboard } from "./Keyboard/Keyboard"
 
 const MUSICAL_ALPHABET = ["A", "B", "C", "D", "E", "F", "G"]
 const keyboardLayout = new KeyboardLayout(MUSICAL_ALPHABET)
@@ -48,6 +48,12 @@ export const Visualizer: React.FC = () => {
             prevKeySignature={prevKeySignature}
             currKeySignature={currKeySignature}
             setDisabled={setDisableSelector} 
+        />
+        <Keyboard 
+            prevRoot={prevRoot}
+            currRoot={currRoot}
+            prevKeySignature={prevKeySignature}
+            currKeySignature={currKeySignature}
         />
 
         <select id="selector" onChange={handleChange} disabled={disableSelector}>

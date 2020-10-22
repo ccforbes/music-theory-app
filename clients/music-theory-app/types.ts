@@ -73,6 +73,18 @@ export class Note {
         }
         return this.labelMap.get(0)
     }
+
+    public isBlackNote(): boolean {
+        let isBlackNote: boolean = true
+        this.labelSet.forEach(label => {
+            if (!label.includes("b") && !label.includes("#")) {
+                isBlackNote = false
+            } else if (label == "Cb" || label === "B#" || label === "Fb" || label === "E#") {
+                isBlackNote = false
+            }
+        })
+        return isBlackNote
+    }
 }
 
 export class KeySignature {

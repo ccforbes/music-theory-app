@@ -221,7 +221,7 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
                 targets: currAccidentalTargets.join(", "),
                 opacity: 1,
                 duration: 1000,
-                delay: anime.stagger(150),
+                delay: anime.stagger(250),
             }, prevAnimationPlayed ? "-=700" : "")
             prevAnimationPlayed = true
         } else {
@@ -242,8 +242,9 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
             animationRef.current.add({
                 targets: `.${classType}-notes > .${currAccidentalType}-${location}`,
                 translateX: `+=${endX - startX}`,
-                translateY: `+=${endY - startY}`
-            }, "-=750")
+                translateY: `+=${endY - startY}`,
+                easing: "easeInOutExpo"
+            }, "-=650")
             numFlats--
         }
         if (includesHigherRoot) {
@@ -253,8 +254,9 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
                 targets: `.${classType}-notes > .${currAccidentalType}-8`,
                 opacity: 0,
                 translateX: `+=${endX - startX}`,
-                translateY: `+=${endY - startY}`
-            }, "-=750")
+                translateY: `+=${endY - startY}`,
+                easing: "easeInOutExpo"
+            }, "-=650")
         }
         animationRef.current.add({
             complete: () => setDisabled(false)
