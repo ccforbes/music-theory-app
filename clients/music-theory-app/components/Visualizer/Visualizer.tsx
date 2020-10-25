@@ -1,9 +1,10 @@
 import React, { useState } from "react"
-import { Staff } from "./Staff/Staff"
+import { Staff } from "./Viewer/Staff/Staff"
 import { KeyboardLayout, KeySignature } from "../../types/types"
-import { Keyboard } from "./Keyboard/Keyboard"
+import { Keyboard } from "./Viewer/Keyboard/Keyboard"
 import styles from "./Visualizer.module.css"
 import { Viewer } from "./Viewer/Viewer"
+import { Sidebar } from "./Sidebar/Sidebar"
 
 const MUSICAL_ALPHABET = ["A", "B", "C", "D", "E", "F", "G"]
 const keyboardLayout = new KeyboardLayout(MUSICAL_ALPHABET)
@@ -65,7 +66,17 @@ export const Visualizer: React.FC = () => {
             currKeySignature={currKeySignature}
         /> */}
 
-        <select id="selector" onChange={handleChange} defaultValue={"C"} disabled={disableSelector}>
+        <Sidebar
+            currRoot={currRoot}
+            currKeySignature={currKeySignature}
+            setPrevRoot={setPrevRoot}
+            setCurrRoot={setCurrRoot}
+            setPrevKeySignature={setPrevKeySignature}
+            setCurrKeySignature={setCurrKeySignature}
+            disableSelector={disableSelector}
+        />
+
+        {/* <select id="selector" onChange={handleChange} defaultValue={"C"} disabled={disableSelector}>
             {ROOT_NOTES.map(rootNote =>
                 <option 
                     key={rootNote} 
@@ -74,6 +85,6 @@ export const Visualizer: React.FC = () => {
                     {rootNote}
                 </option>
             )}
-        </select>
+        </select> */}
     </div>
 }

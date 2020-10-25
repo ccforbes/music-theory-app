@@ -1,7 +1,7 @@
 import React, { SetStateAction } from "react"
 import { KeySignature } from "../../../types/types"
-import { Staff } from "../Staff/Staff"
-import { Keyboard } from "../Keyboard/Keyboard"
+import { Staff } from "./Staff/Staff"
+import { Keyboard } from "./Keyboard/Keyboard"
 import styles from "./Viewer.module.css"
 
 type ViewerProps = {

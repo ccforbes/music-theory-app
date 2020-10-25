@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react"
 import anime, { AnimeTimelineInstance } from "animejs"
-import { KeySignature, KeyboardLayout } from "../../../types/types"
+import { KeySignature, KeyboardLayout } from "../../../../types/types"
 
 type KeyboardProps = {
     prevRoot: string,

@@ -2,7 +2,7 @@ import React, { useRef, useEffect, SetStateAction } from "react"
 import anime, { AnimeInstance, AnimeInstanceParams, AnimeTimelineInstance } from "animejs"
 import { TrebleClef } from "./MusicalComponents/TrebleClef"
 import { BassClef } from "./MusicalComponents/BassClef"
-import { KeySignature } from "../../../types/types"
+import { KeySignature } from "../../../../types/types"
 
 const ACCIDENTAL_X_SPACING = 75
 const PITCH_Y_SPACING = 25

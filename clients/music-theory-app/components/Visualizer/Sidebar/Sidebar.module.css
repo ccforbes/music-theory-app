@@ -1,0 +1,17 @@
+.sidebar {
+    display: flex;
+    justify-content: space-around;
+}
+
+@media screen 
+    and (orientation: portrait)
+    and (min-width: 540px)
+    and (max-width: 1366px) {
+        .sidebar {
+            flex-direction: row;
+        }
+}
+
+.sidebar {
+    flex-direction: column;
+}
