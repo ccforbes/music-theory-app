@@ -1,0 +1,13 @@
+@media (orientation: portrait)
+    and (max-device-width: 1366) {
+        .visualizer {
+            display: flex;
+            flex-direction: column;
+        }
+}
+
+.visualizer {
+    display: flex;
+    flex-direction: row;
+}
+

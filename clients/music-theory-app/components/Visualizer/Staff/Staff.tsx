@@ -2,7 +2,7 @@ import React, { useRef, useEffect, SetStateAction } from "react"
 import anime, { AnimeInstance, AnimeInstanceParams, AnimeTimelineInstance } from "animejs"
 import { TrebleClef } from "./MusicalComponents/TrebleClef"
 import { BassClef } from "./MusicalComponents/BassClef"
-import { KeySignature } from "../../../types"
+import { KeySignature } from "../../../types/types"
 
 const ACCIDENTAL_X_SPACING = 75
 const PITCH_Y_SPACING = 25
@@ -71,7 +71,7 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
     const animationRef = useRef<AnimeTimelineInstance>(null)
 
     // find start pitch function
-    const findStartPitch = (root: string): string => root.includes("b") || root.includes("#") ? root.substring(0, 1) : root
+    const findStartPitch = (root: string): string => root.includes("♭") || root.includes("♯") ? root.substring(0, 1) : root
 
     // figure out staff properties
     const orderToUse = isTrebleClef ? TREBLE_START_PITCH_ORDER : BASS_START_PITCH_ORDER
@@ -263,7 +263,6 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
         }, "-=1500")
     }, [currKeySignature])
 
-    return <div className="staff">
-        {isTrebleClef ? <TrebleClef /> : <BassClef />}
-    </div>
+    return isTrebleClef ? <TrebleClef /> : <BassClef />
+    
 }

@@ -1,12 +1,14 @@
 import React, { useState } from "react"
 import { Staff } from "./Staff/Staff"
-import { KeyboardLayout, KeySignature } from "../../types"
+import { KeyboardLayout, KeySignature } from "../../types/types"
 import { Keyboard } from "./Keyboard/Keyboard"
+import styles from "./Visualizer.module.css"
+import { Viewer } from "./Viewer/Viewer"
 
 const MUSICAL_ALPHABET = ["A", "B", "C", "D", "E", "F", "G"]
 const keyboardLayout = new KeyboardLayout(MUSICAL_ALPHABET)
 
-const ROOT_NOTES = ["Cb", "Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#"]
+const ROOT_NOTES = ["C♭", "G♭", "D♭", "A♭", "E♭", "B♭", "F", "C", "G", "D", "A", "E", "B", "F♯", "C♯"]
 const keySignatures: Map<string, KeySignature> = new Map<string, KeySignature>()
 ROOT_NOTES.map(startNote => {
     keySignatures.set(
@@ -32,8 +34,15 @@ export const Visualizer: React.FC = () => {
         setCurrKeySignature(keySignatures.get(value))
     }
 
-    return <>
-        <Staff 
+    return <div className={styles.visualizer}>
+        <Viewer 
+            prevRoot={prevRoot}
+            currRoot={currRoot}
+            prevKeySignature={prevKeySignature}
+            currKeySignature={currKeySignature}
+            setDisableSelector={setDisableSelector}
+        />
+        {/* <Staff 
             isTrebleClef={true} 
             currRoot={currRoot} 
             prevRoot={prevRoot} 
@@ -54,7 +63,7 @@ export const Visualizer: React.FC = () => {
             currRoot={currRoot}
             prevKeySignature={prevKeySignature}
             currKeySignature={currKeySignature}
-        />
+        /> */}
 
         <select id="selector" onChange={handleChange} defaultValue={"C"} disabled={disableSelector}>
             {ROOT_NOTES.map(rootNote =>
@@ -66,5 +75,5 @@ export const Visualizer: React.FC = () => {
                 </option>
             )}
         </select>
-    </>
+    </div>
 }
