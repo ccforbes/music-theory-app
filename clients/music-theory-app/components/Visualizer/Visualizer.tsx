@@ -1,7 +1,5 @@
 import React, { CSSProperties, useState } from "react"
-import { Staff } from "./Viewer/Staff/Staff"
 import { KeyboardLayout, KeySignature } from "../../types/types"
-import { Keyboard } from "./Viewer/Keyboard/Keyboard"
 import styles from "./Visualizer.module.css"
 import { Viewer } from "./Viewer/Viewer"
 import { Sidebar } from "./Sidebar/Sidebar"
@@ -27,15 +25,6 @@ export const Visualizer: React.FC = () => {
     const [currKeySignature, setCurrKeySignature] = useState(keySignatures.get("C"))
     const [disableSelector, setDisableSelector] = useState(false)
 
-    // const handleChange = event => {
-    //     event.preventDefault()
-    //     const { value } = event.target
-    //     setPrevRoot(currRoot)
-    //     setCurrRoot(value)
-    //     setPrevKeySignature(currKeySignature)
-    //     setCurrKeySignature(keySignatures.get(value))
-    // }
-
     return <div className={styles.visualizer}>
         <Viewer 
             prevRoot={prevRoot}
@@ -53,40 +42,6 @@ export const Visualizer: React.FC = () => {
             setCurrKeySignature={setCurrKeySignature}
             disableSelector={disableSelector}
         />
-        {/* <Staff 
-            isTrebleClef={true} 
-            currRoot={currRoot} 
-            prevRoot={prevRoot} 
-            prevKeySignature={prevKeySignature}
-            currKeySignature={currKeySignature}
-            setDisabled={setDisableSelector} 
-        />
-        <Staff 
-            isTrebleClef={false} 
-            currRoot={currRoot} 
-            prevRoot={prevRoot} 
-            prevKeySignature={prevKeySignature}
-            currKeySignature={currKeySignature}
-            setDisabled={setDisableSelector} 
-        />
-        <Keyboard 
-            prevRoot={prevRoot}
-            currRoot={currRoot}
-            prevKeySignature={prevKeySignature}
-            currKeySignature={currKeySignature}
-        /> */}
-
-
-        {/* <select id="selector" onChange={handleChange} defaultValue={"C"} disabled={disableSelector}>
-            {ROOT_NOTES.map(rootNote =>
-                <option 
-                    key={rootNote} 
-                    value={rootNote} 
-                >
-                    {rootNote}
-                </option>
-            )}
-        </select> */}
     </div>
 
 

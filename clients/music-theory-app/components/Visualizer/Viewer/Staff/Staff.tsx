@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, SetStateAction } from "react"
-import anime, { AnimeInstance, AnimeInstanceParams, AnimeTimelineInstance } from "animejs"
+import anime, { AnimeTimelineInstance } from "animejs"
 import { TrebleClef } from "./MusicalComponents/TrebleClef"
 import { BassClef } from "./MusicalComponents/BassClef"
 import { KeySignature } from "../../../../types/types"

@@ -26,47 +26,14 @@ export const Keyboard: React.FC<KeyboardProps> = ({ prevRoot, currRoot, prevKeyS
 
     const prevPos = KEY_LOCATION_MAP.get(prevRoot)
     const currPos = KEY_LOCATION_MAP.get(currRoot)
-    const prevNotes = prevKeySignature.getNotes()
-    const currNotes = currKeySignature.getNotes()
-    const prevNoteLabels = prevKeySignature.getNoteLabels()
-    const currNoteLabels = currKeySignature.getNoteLabels()
 
     useEffect(() => {
         animationRef.current = anime.timeline()
-        // for (let i = 0; i < prevNotes.length; i++) {
-        //     const color = prevNotes[i].isBlackNote() ? "#000000" : "#FFFFFF"
-        //     const targets = []
-        //     prevNotes[i].getLabels().forEach(label => {
-        //         targets.push(`.${label}`)
-        //     })
-        //     console.log(prevNoteLabels[i], prevNotes[i].isBlackNote())
-        //     console.log(targets.join(", "))
-        //     const label = prevNoteLabels[i]=
-        //     animationRef.current.add({
-        //         targets: `.${label}`,
-        //         fill: color,
-        //     }, "-=750")
-        // }
-
         animationRef.current.add({
             targets: ".arrow",
             translateX: `+=${currPos - prevPos}`,
             easing: "easeInOutExpo"
         })
-
-        // for (let i = 0; i < currNotes.length; i++) {
-        //     const color = currNotes[i].isBlackNote() ? "#156ED7" : "#138BFA"
-        //     const targets = []
-        //     currNotes[i].getLabels().forEach(label => {
-        //         targets.push(`.${label}`)
-        //     })
-        //     console.log(targets.join(" "))
-        //     const label = currNoteLabels[i]
-        //     animationRef.current.add({
-        //         targets: `.${label}`,
-        //         fill: color,
-        //     }, "-=750")
-        // }
     }, [currKeySignature])
 
     return <>
