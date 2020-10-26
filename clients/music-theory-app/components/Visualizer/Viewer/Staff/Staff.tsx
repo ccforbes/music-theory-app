@@ -157,7 +157,7 @@ export const Staff: React.FC<StaffProps> = ({
             }
             if (includesHigherRoot) {
                 numAccidentals = prevKeySignature.getNumberAccidentals()
-                const rootIndex = currAccidentalLocations.indexOf(1)
+                const rootIndex = prevAccidentalLocations.indexOf(1)
                 const rootAccidentalPosition = numAccidentals - rootIndex
                 const [startX, startY] = prevAccidentalPositionsToUse[rootAccidentalPosition]
                 const [endX, endY] = prevNotePos[8]
