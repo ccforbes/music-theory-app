@@ -1,5 +1,5 @@
 # music-theory-app
-Demo: <a>https://music-theory-app.vercel.app/</a>
+Demo: <a>https://music-theory-app.vercel.app/</a><br>
 This will app will aim to help make learning music theory easier! First iteration will start with a key signature visualizer
 
 ## Key Signature Visualizer
