@@ -24,6 +24,7 @@ export const Visualizer: React.FC = () => {
     const [prevKeySignature, setPrevKeySignature] = useState(keySignatures.get("C"))
     const [currKeySignature, setCurrKeySignature] = useState(keySignatures.get("C"))
     const [disableSelector, setDisableSelector] = useState(false)
+    const [toggle, setToggle] = useState(false)
 
     return <div className={styles.visualizer}>
         <Viewer 
@@ -32,6 +33,7 @@ export const Visualizer: React.FC = () => {
             prevKeySignature={prevKeySignature}
             currKeySignature={currKeySignature}
             setDisableSelector={setDisableSelector}
+            toggle={toggle}
         />
         <Sidebar
             currRoot={currRoot}
@@ -41,6 +43,8 @@ export const Visualizer: React.FC = () => {
             setPrevKeySignature={setPrevKeySignature}
             setCurrKeySignature={setCurrKeySignature}
             disableSelector={disableSelector}
+            toggle={toggle}
+            setToggle={setToggle}
         />
     </div>
 

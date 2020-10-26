@@ -9,10 +9,18 @@ type ViewerProps = {
     currRoot: string,
     prevKeySignature: KeySignature,
     currKeySignature: KeySignature,
-    setDisableSelector: React.Dispatch<SetStateAction<boolean>>
+    setDisableSelector: React.Dispatch<SetStateAction<boolean>>,
+    toggle: boolean
 }
 
-export const Viewer: React.FC<ViewerProps> = ({ prevRoot, currRoot, prevKeySignature, currKeySignature, setDisableSelector }) => {
+export const Viewer: React.FC<ViewerProps> = ({ 
+    prevRoot, 
+    currRoot, 
+    prevKeySignature, 
+    currKeySignature, 
+    setDisableSelector,
+    toggle
+}) => {
     return <div className={styles.viewer}>
         <div>
             <Staff 
@@ -22,6 +30,7 @@ export const Viewer: React.FC<ViewerProps> = ({ prevRoot, currRoot, prevKeySigna
                 prevKeySignature={prevKeySignature}
                 currKeySignature={currKeySignature}
                 setDisabled={setDisableSelector} 
+                toggle={toggle}
             />
             <Staff 
                 isTrebleClef={false} 
@@ -30,6 +39,7 @@ export const Viewer: React.FC<ViewerProps> = ({ prevRoot, currRoot, prevKeySigna
                 prevKeySignature={prevKeySignature}
                 currKeySignature={currKeySignature}
                 setDisabled={setDisableSelector} 
+                toggle={toggle}
             />
             <Keyboard 
                 prevRoot={prevRoot}

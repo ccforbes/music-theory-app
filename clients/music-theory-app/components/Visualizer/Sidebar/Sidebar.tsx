@@ -36,14 +36,26 @@ type SidebarProps = {
     setCurrRoot: React.Dispatch<SetStateAction<string>>,
     setPrevKeySignature: React.Dispatch<SetStateAction<KeySignature>>,
     setCurrKeySignature: React.Dispatch<SetStateAction<KeySignature>>,
-    disableSelector: boolean
+    disableSelector: boolean,
+    toggle: boolean,
+    setToggle: React.Dispatch<SetStateAction<boolean>>
 }
 
 const initStyle: React.CSSProperties = {
     textAlign: "center"
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currRoot, currKeySignature, setPrevRoot, setCurrRoot, setPrevKeySignature, setCurrKeySignature, disableSelector }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ 
+    currRoot, 
+    currKeySignature, 
+    setPrevRoot, 
+    setCurrRoot, 
+    setPrevKeySignature, 
+    setCurrKeySignature, 
+    disableSelector, 
+    toggle,
+    setToggle
+}) => {
     const [settings, setSettings] = useState(initialSettings)
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -60,6 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currRoot, currKeySignature, se
         setCurrRoot(settings.root)
         setPrevKeySignature(currKeySignature)
         setCurrKeySignature(keySignatures.get(settings.root))
+        setToggle(!toggle)
     }
 
     return <div className={styles.sidebar}>

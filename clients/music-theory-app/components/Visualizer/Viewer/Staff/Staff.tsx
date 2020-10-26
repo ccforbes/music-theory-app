@@ -31,7 +31,8 @@ type StaffProps = {
     currRoot: string,
     prevKeySignature: KeySignature,
     currKeySignature: KeySignature,
-    setDisabled: React.Dispatch<SetStateAction<boolean>> 
+    setDisabled: React.Dispatch<SetStateAction<boolean>>,
+    toggle: boolean 
 }
 
 function getLetterPositions(orderToUse: string[]): Map<string, number[]> {
@@ -66,7 +67,15 @@ function findKeySignatureLocations(pitchMap: Map<string, number[]>, accidentals:
         return locations
 }
 
-export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, prevKeySignature, currKeySignature, setDisabled }) => {
+export const Staff: React.FC<StaffProps> = ({ 
+    isTrebleClef, 
+    currRoot, 
+    prevRoot, 
+    prevKeySignature, 
+    currKeySignature, 
+    setDisabled,
+    toggle
+}) => {
     // hooks
     const animationRef = useRef<AnimeTimelineInstance>(null)
 
@@ -126,7 +135,7 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
         })
         let prevAnimationPlayed = true
 
-        let numFlats = prevKeySignature.getNumberAccidentals()
+        let numAccidentals = prevKeySignature.getNumberAccidentals()
         let includesHigherRoot = false
         // remove prev accidentals if there are any
         if (prevAccidentalTargets.length > 0) {
@@ -135,25 +144,30 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
                     includesHigherRoot = true
                     continue
                 }
-                const [startX, startY] = prevAccidentalPositionsToUse[numFlats]
+                const [startX, startY] = prevAccidentalPositionsToUse[numAccidentals]
                 const [endX, endY] = prevNotePos[location]
                 animationRef.current.add({
                     targets: `.${classType}-notes > .${prevAccidentalType}-${location}`,
                     opacity: 0,
                     translateX: `+=${endX - startX}`,
-                    translateY: `+=${endY - startY}`
+                    translateY: `+=${endY - startY}`,
+                    easing: "easeInOutExpo"
                 }, "-=1000")
-                numFlats--
+                numAccidentals--
             }
             if (includesHigherRoot) {
-                const [startX, startY] = prevAccidentalPositionsToUse[1]
+                numAccidentals = currKeySignature.getNumberAccidentals()
+                const rootIndex = currAccidentalLocations.indexOf(1)
+                const rootAccidentalPosition = numAccidentals - rootIndex
+                const [startX, startY] = prevAccidentalPositionsToUse[rootAccidentalPosition]
                 const [endX, endY] = prevNotePos[8]
                 animationRef.current.add({
                     targets: `.${classType}-notes > .${prevAccidentalType}-8`,
                     opacity: 0,
                     translateX: `+=${endX - startX}`,
-                    translateY: `+=${endY - startY}`
-                }, "-=750")
+                    translateY: `+=${endY - startY}`,
+                    easing: "easeInOutExpo"
+                }, "-=1000")
             }
             prevAnimationPlayed = true
         } else {
@@ -230,7 +244,7 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
         
 
         // move accidentals if there are any
-        numFlats = currKeySignature.getNumberAccidentals()
+        numAccidentals = currKeySignature.getNumberAccidentals()
         includesHigherRoot = false
         for (const location of currAccidentalLocations) {
             if (location == 8) {
@@ -238,21 +252,23 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
                 continue
             }
             const [startX, startY] = currNotePos[location]
-            const [endX, endY] = currAccidentalPositionsToUse[numFlats]
+            const [endX, endY] = currAccidentalPositionsToUse[numAccidentals]
             animationRef.current.add({
                 targets: `.${classType}-notes > .${currAccidentalType}-${location}`,
                 translateX: `+=${endX - startX}`,
                 translateY: `+=${endY - startY}`,
                 easing: "easeInOutExpo"
             }, "-=650")
-            numFlats--
+            numAccidentals--
         }
         if (includesHigherRoot) {
+            numAccidentals = currKeySignature.getNumberAccidentals()
+            const rootIndex = currAccidentalLocations.indexOf(1)
+            const rootAccidentalPosition = numAccidentals - rootIndex
             const [startX, startY] = currNotePos[8]
-            const [endX, endY] = currAccidentalPositionsToUse[1]
+            const [endX, endY] = currAccidentalPositionsToUse[rootAccidentalPosition]
             animationRef.current.add({
                 targets: `.${classType}-notes > .${currAccidentalType}-8`,
-                opacity: 0,
                 translateX: `+=${endX - startX}`,
                 translateY: `+=${endY - startY}`,
                 easing: "easeInOutExpo"
@@ -261,7 +277,7 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
         animationRef.current.add({
             complete: () => setDisabled(false)
         }, "-=1000")
-    }, [currKeySignature])
+    }, [toggle])
 
     return isTrebleClef ? <TrebleClef /> : <BassClef />
     
