@@ -1,4 +1,5 @@
 # music-theory-app
+Demo: <a>https://music-theory-app.vercel.app/</a>
 This will app will aim to help make learning music theory easier! First iteration will start with a key signature visualizer
 
 ## Key Signature Visualizer
@@ -17,3 +18,4 @@ Visualize a musical scale's key signature! Learn patterns for each musical mode 
     - Make SVG properties less coupled
     - Move constants into `constants.ts` file
     - Create animation hook 
+- Make better UI
