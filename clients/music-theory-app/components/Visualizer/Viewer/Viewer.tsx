@@ -14,27 +14,29 @@ type ViewerProps = {
 
 export const Viewer: React.FC<ViewerProps> = ({ prevRoot, currRoot, prevKeySignature, currKeySignature, setDisableSelector }) => {
     return <div className={styles.viewer}>
-        <Staff 
-            isTrebleClef={true} 
-            currRoot={currRoot} 
-            prevRoot={prevRoot} 
-            prevKeySignature={prevKeySignature}
-            currKeySignature={currKeySignature}
-            setDisabled={setDisableSelector} 
-        />
-        <Staff 
-            isTrebleClef={false} 
-            currRoot={currRoot} 
-            prevRoot={prevRoot} 
-            prevKeySignature={prevKeySignature}
-            currKeySignature={currKeySignature}
-            setDisabled={setDisableSelector} 
-        />
-        <Keyboard 
-            prevRoot={prevRoot}
-            currRoot={currRoot}
-            prevKeySignature={prevKeySignature}
-            currKeySignature={currKeySignature}
-        />
+        <div>
+            <Staff 
+                isTrebleClef={true} 
+                currRoot={currRoot} 
+                prevRoot={prevRoot} 
+                prevKeySignature={prevKeySignature}
+                currKeySignature={currKeySignature}
+                setDisabled={setDisableSelector} 
+            />
+            <Staff 
+                isTrebleClef={false} 
+                currRoot={currRoot} 
+                prevRoot={prevRoot} 
+                prevKeySignature={prevKeySignature}
+                currKeySignature={currKeySignature}
+                setDisabled={setDisableSelector} 
+            />
+            <Keyboard 
+                prevRoot={prevRoot}
+                currRoot={currRoot}
+                prevKeySignature={prevKeySignature}
+                currKeySignature={currKeySignature}
+            />
+        </div>
     </div>
 }

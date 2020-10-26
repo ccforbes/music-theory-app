@@ -1,7 +1,7 @@
-import { getPackedSettings } from "http2"
-import React, { useState, SetStateAction } from "react"
+import React, { useState, SetStateAction, CSSProperties } from "react"
 import { KeySignature, KeyboardLayout } from "../../../types/types"
 import styles from "./Sidebar.module.css"
+import { Form, Button } from "react-bootstrap"
 
 const MUSICAL_ALPHABET = ["A", "B", "C", "D", "E", "F", "G"]
 const keyboardLayout = new KeyboardLayout(MUSICAL_ALPHABET)
@@ -39,21 +39,22 @@ type SidebarProps = {
     disableSelector: boolean
 }
 
+const initStyle: React.CSSProperties = {
+    textAlign: "center"
+}
+
 export const Sidebar: React.FC<SidebarProps> = ({ currRoot, currKeySignature, setPrevRoot, setCurrRoot, setPrevKeySignature, setCurrKeySignature, disableSelector }) => {
     const [settings, setSettings] = useState(initialSettings)
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.target
-        console.log(name)
-        console.log(value)
         setSettings({
             ...settings,
             [name]: value
         })
     }
 
-    const handleClick = (event: React.FormEvent<HTMLButtonElement>) => {
-        console.log("clicked")
+    const handleClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
         event.preventDefault()
         setPrevRoot(currRoot)
         setCurrRoot(settings.root)
@@ -62,46 +63,66 @@ export const Sidebar: React.FC<SidebarProps> = ({ currRoot, currKeySignature, se
     }
 
     return <div className={styles.sidebar}>
-        <div className="musical-scale-settings">
-            <h3>Musical Scale</h3>
-            <label htmlFor="root-select">Root</label>
-            <select 
-                id="root-select" 
-                name="root"
-                onChange={handleChange} 
-                defaultValue={initialSettings.root}
-            >
-                {ROOT_NOTES.map((root) => 
-                    <option key={root} value={root}>
-                        {root}
-                    </option>
-                )}
-            </select>
-
-            <label htmlFor="mode-select">Mode</label>
-            <select 
-                id="mode-select"
-                name="mode"
-                onChange={handleChange} 
-                defaultValue={initialSettings.mode}
-            >
-                {MODES.map((mode) => 
-                    <option 
-                        key={mode} 
-                        value={mode} 
-                        disabled={mode.includes("Coming Soon")}
+        <Form className={styles.settings}>
+            <h3 className={styles.title}>Musical Scale</h3>
+            <div className={styles.musicScaleSettings}>
+                <Form.Group className="root-select" style={initStyle}>
+                    <Form.Label>Root</Form.Label>
+                    <Form.Control
+                        as="select"
+                        name="root"
+                        onChange={handleChange}
+                        defaultValue={initialSettings.root}
                     >
-                        {mode}
-                    </option>
-                )}
-            </select>
-        </div>
+                        {ROOT_NOTES.map((root) => 
+                            <option key={root} value={root}>
+                                {root}
+                            </option>
+                        )}
+                    </Form.Control>
+                </Form.Group>
 
-        <div className="animation-settings">
-            <h3>Animation</h3>
-            <button disabled>Back</button>
-            <button disabled={disableSelector} onClick={handleClick}>Play</button>
-            <button disabled>Next</button>
+                <Form.Group className="mode-select" style={initStyle}>
+                    <Form.Label>Mode</Form.Label>
+                    <Form.Control
+                        as="select"
+                        name="mode"
+                        onChange={handleChange}
+                        defaultValue={initialSettings.mode}
+                    >
+                        {MODES.map((mode) => 
+                            <option 
+                                key={mode} 
+                                value={mode} 
+                                disabled={mode.includes("Coming Soon")}
+                            >
+                                {mode}
+                            </option>
+                        )}
+                    </Form.Control>
+                </Form.Group>
+            </div>
+        </Form>
+
+        <style type="text/css">
+            {`
+            .btn-primary {
+                background-color: #1C6E8C;
+            }
+
+            .btn-secondary {
+                background-color: #274156;
+            }
+            `}
+        </style>
+
+        <div className={styles.settings}>
+            <h3 className={styles.title}>Animation</h3>
+            <div className={styles.animationSettings}>
+                <Button variant="secondary" disabled>Back</Button>
+                <Button variant="primary" disabled={disableSelector} onClick={handleClick}>Play</Button>
+                <Button variant="secondary" disabled>Next</Button>
+            </div>
         </div>
     </div>
 }

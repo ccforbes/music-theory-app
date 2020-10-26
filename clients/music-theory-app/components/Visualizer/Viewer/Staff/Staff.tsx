@@ -260,7 +260,7 @@ export const Staff: React.FC<StaffProps> = ({ isTrebleClef, currRoot, prevRoot, 
         }
         animationRef.current.add({
             complete: () => setDisabled(false)
-        }, "-=1500")
+        }, "-=1000")
     }, [currKeySignature])
 
     return isTrebleClef ? <TrebleClef /> : <BassClef />
