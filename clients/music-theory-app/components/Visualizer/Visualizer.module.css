@@ -1,0 +1,17 @@
+.visualizer {
+    max-height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+@media screen and (orientation: portrait) and (max-width: 1024px) {
+    .visualizer {
+        flex-direction: column;
+    }
+}

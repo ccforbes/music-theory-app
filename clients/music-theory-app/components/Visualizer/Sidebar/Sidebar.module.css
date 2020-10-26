@@ -1,0 +1,37 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem;
+}
+
+.musicScaleSettings {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.animationSettings {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+}
+
+.settings {
+    padding: 2rem;
+}
+
+@media screen and (orientation: portrait) and (min-width: 540px) and (max-width: 1024px) {
+    .sidebar {
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+
+    /* .musicScaleSettings {
+        display: flex;
+        justify-content: flex-start;
+    } */
+}

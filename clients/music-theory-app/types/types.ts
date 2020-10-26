@@ -15,14 +15,14 @@ export class KeyboardLayout {
         let i = 0, j = 1
         while (j < naturalPitches.length) {
             if (naturalPitches[i] == "B" || naturalPitches[i] == "E") {
-                notes.push(new Note([naturalPitches[i], naturalPitches[j] + "b"]))
-                notes.push(new Note([naturalPitches[i] + "#", naturalPitches[j]]))
+                notes.push(new Note([naturalPitches[i], naturalPitches[j] + "♭"]))
+                notes.push(new Note([naturalPitches[i] + "♯", naturalPitches[j]]))
             } else {
                 if (naturalPitches[i] != "C" && naturalPitches[i] != "F") {
                     notes.push(new Note([naturalPitches[i]]))
                 }
                 const blackKey: string[] = 
-                    [naturalPitches[i] + "#", naturalPitches[j] + "b"]
+                    [naturalPitches[i] + "♯", naturalPitches[j] + "♭"]
                 notes.push(new Note(blackKey))
             }
             i++
@@ -40,9 +40,9 @@ export class Note {
         this.labelSet = new Set<string>(pitches)
         this.labelMap = new Map<number, string>()
         for (const pitch of pitches) {
-            if (pitch.includes("b")) {
+            if (pitch.includes("♭")) {
                 this.labelMap.set(1, pitch)
-            } else if (pitch.includes("#")) {
+            } else if (pitch.includes("♯")) {
                 this.labelMap.set(2, pitch)
             } else {
                 this.labelMap.set(0, pitch)
@@ -77,9 +77,9 @@ export class Note {
     public isBlackNote(): boolean {
         let isBlackNote: boolean = true
         this.labelSet.forEach(label => {
-            if (!label.includes("b") && !label.includes("#")) {
+            if (!label.includes("♭") && !label.includes("♯")) {
                 isBlackNote = false
-            } else if (label == "Cb" || label === "B#" || label === "Fb" || label === "E#") {
+            } else if (label == "C♭" || label === "B♯" || label === "F♭" || label === "E♯") {
                 isBlackNote = false
             }
         })
@@ -95,9 +95,9 @@ export class KeySignature {
     private startNote: string
     private pattern: number[] = [2, 2, 1, 2, 2, 2, 1]
     private flatKeySignatures: Set<string> = 
-        new Set<string>(["F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"]) 
+        new Set<string>(["F", "B♭", "E♭", "A♭", "D♭", "G♭", "C♭"]) 
     private sharpKeySignatures: Set<string> =
-        new Set<string>(["G", "D", "A", "E", "B", "F#", "C#"])
+        new Set<string>(["G", "D", "A", "E", "B", "F♯", "C♯"])
 
     public constructor(startNote: string, keyboardLayout: Note[]) {
         this.startNote = startNote
@@ -114,7 +114,7 @@ export class KeySignature {
         })
 
         this.accidentalLocations = this.noteLabels.map((label, index) => {
-            if (label.includes("b") || label.includes("#")) {
+            if (label.includes("♭") || label.includes("♯")) {
                 return index + 1
             }
         }).filter(index => index !== undefined)

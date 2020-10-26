@@ -1,12 +1,15 @@
-import React, { useState } from "react"
-import { Staff } from "./Staff/Staff"
-import { KeyboardLayout, KeySignature } from "../../types"
-import { Keyboard } from "./Keyboard/Keyboard"
+import React, { CSSProperties, useState } from "react"
+import { Staff } from "./Viewer/Staff/Staff"
+import { KeyboardLayout, KeySignature } from "../../types/types"
+import { Keyboard } from "./Viewer/Keyboard/Keyboard"
+import styles from "./Visualizer.module.css"
+import { Viewer } from "./Viewer/Viewer"
+import { Sidebar } from "./Sidebar/Sidebar"
 
 const MUSICAL_ALPHABET = ["A", "B", "C", "D", "E", "F", "G"]
 const keyboardLayout = new KeyboardLayout(MUSICAL_ALPHABET)
 
-const ROOT_NOTES = ["Cb", "Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#"]
+const ROOT_NOTES = ["C♭", "G♭", "D♭", "A♭", "E♭", "B♭", "F", "C", "G", "D", "A", "E", "B", "F♯", "C♯"]
 const keySignatures: Map<string, KeySignature> = new Map<string, KeySignature>()
 ROOT_NOTES.map(startNote => {
     keySignatures.set(
@@ -14,6 +17,7 @@ ROOT_NOTES.map(startNote => {
         new KeySignature(startNote, keyboardLayout.getKeyboardLayout())
     )
 })
+
 
 export const Visualizer: React.FC = () => {
     // initial state
@@ -23,17 +27,33 @@ export const Visualizer: React.FC = () => {
     const [currKeySignature, setCurrKeySignature] = useState(keySignatures.get("C"))
     const [disableSelector, setDisableSelector] = useState(false)
 
-    const handleChange = event => {
-        event.preventDefault()
-        const { value } = event.target
-        setPrevRoot(currRoot)
-        setCurrRoot(value)
-        setPrevKeySignature(currKeySignature)
-        setCurrKeySignature(keySignatures.get(value))
-    }
+    // const handleChange = event => {
+    //     event.preventDefault()
+    //     const { value } = event.target
+    //     setPrevRoot(currRoot)
+    //     setCurrRoot(value)
+    //     setPrevKeySignature(currKeySignature)
+    //     setCurrKeySignature(keySignatures.get(value))
+    // }
 
-    return <>
-        <Staff 
+    return <div className={styles.visualizer}>
+        <Viewer 
+            prevRoot={prevRoot}
+            currRoot={currRoot}
+            prevKeySignature={prevKeySignature}
+            currKeySignature={currKeySignature}
+            setDisableSelector={setDisableSelector}
+        />
+        <Sidebar
+            currRoot={currRoot}
+            currKeySignature={currKeySignature}
+            setPrevRoot={setPrevRoot}
+            setCurrRoot={setCurrRoot}
+            setPrevKeySignature={setPrevKeySignature}
+            setCurrKeySignature={setCurrKeySignature}
+            disableSelector={disableSelector}
+        />
+        {/* <Staff 
             isTrebleClef={true} 
             currRoot={currRoot} 
             prevRoot={prevRoot} 
@@ -54,9 +74,10 @@ export const Visualizer: React.FC = () => {
             currRoot={currRoot}
             prevKeySignature={prevKeySignature}
             currKeySignature={currKeySignature}
-        />
+        /> */}
 
-        <select id="selector" onChange={handleChange} defaultValue={"C"} disabled={disableSelector}>
+
+        {/* <select id="selector" onChange={handleChange} defaultValue={"C"} disabled={disableSelector}>
             {ROOT_NOTES.map(rootNote =>
                 <option 
                     key={rootNote} 
@@ -65,6 +86,8 @@ export const Visualizer: React.FC = () => {
                     {rootNote}
                 </option>
             )}
-        </select>
-    </>
+        </select> */}
+    </div>
+
+
 }
