@@ -18,11 +18,6 @@ ROOT_NOTES.map(startNote => {
     )
 })
 
-// const initStyle: CSSProperties = {
-//     position: "absolute",
-//     left: "50%",
-//     top: "50%"
-// }
 
 export const Visualizer: React.FC = () => {
     // initial state

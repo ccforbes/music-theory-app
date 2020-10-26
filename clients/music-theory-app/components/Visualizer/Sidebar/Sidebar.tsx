@@ -109,7 +109,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ currRoot, currKeySignature, se
             .btn-primary {
                 background-color: #1C6E8C;
             }
-
+            .btn-primary:hover {
+                background-color: #007BA8;
+            }
+            .btn-primary:disabled {
+                background-color: #2490B7;
+                border-color: #2490B7
+            }
             .btn-secondary {
                 background-color: #274156;
             }
@@ -120,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currRoot, currKeySignature, se
             <h3 className={styles.title}>Animation</h3>
             <div className={styles.animationSettings}>
                 <Button variant="secondary" disabled>Back</Button>
-                <Button variant="primary" disabled={disableSelector} onClick={handleClick}>Play</Button>
+                <Button disabled={disableSelector} onClick={handleClick}>Play</Button>
                 <Button variant="secondary" disabled>Next</Button>
             </div>
         </div>
