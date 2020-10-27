@@ -236,7 +236,7 @@ export const Staff: React.FC<StaffProps> = ({
                 opacity: 1,
                 duration: 1000,
                 delay: anime.stagger(250),
-            }, prevAnimationPlayed ? "-=700" : "")
+            })
             prevAnimationPlayed = true
         } else {
             prevAnimationPlayed = false
