@@ -6,6 +6,7 @@ This will app will aim to help make learning music theory easier! First iteratio
 Visualize a musical scale's key signature! Learn patterns for each musical mode with any root (starting) note and see where each accidental in the key signature originated from!
 
 ## Future Updates
+- Sound for each key signature
 - Include all other musical modes
 - Optional animation step by step
 - Animate/highlight keys on the keyboard visual
